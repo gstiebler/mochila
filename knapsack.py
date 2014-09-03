@@ -23,9 +23,6 @@ from deap import creator
 from deap import tools
 
 IND_INIT_SIZE = 5
-MAX_ITEM = 50
-MAX_WEIGHT = 50
-NBR_ITEMS = 20
 
 # To assure reproductibility, the RNG seed is set prior to the items
 # dict initialization. It is also seeded in main().
@@ -38,13 +35,23 @@ creator.create("Individual", set, fitness=creator.Fitness)
 
 toolbox = base.Toolbox()
 
-# Attribute generator
-toolbox.register("attr_item", random.randrange, NBR_ITEMS)
+numberOfItems = 26
 
-# Structure initializers
-toolbox.register("individual", tools.initRepeat, creator.Individual, 
-    toolbox.attr_item, IND_INIT_SIZE)
-toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+def initializeToolbs(numItems):
+    numberOfItems = numItems
+
+    # Attribute generator
+    toolbox.register("attr_item", random.randrange, numItems)
+
+    # Structure initializers
+    toolbox.register("individual", tools.initRepeat, creator.Individual, 
+        toolbox.attr_item, IND_INIT_SIZE)
+    toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+    
+    toolbox.register("evaluate", evalKnapsack)
+    toolbox.register("mate", cxSet)
+    toolbox.register("mutate", mutSet)
+    toolbox.register("select", tools.selNSGA2)
 
 def evalKnapsack(individual):
     value = 0.0
@@ -73,13 +80,8 @@ def mutSet(individual):
         if len(individual) > 0:     # We cannot pop from an empty set
             individual.remove(random.choice(sorted(tuple(individual))))
     else:
-        individual.add(random.randrange(NBR_ITEMS))
+        individual.add(random.randrange(numberOfItems))
     return individual,
-
-toolbox.register("evaluate", evalKnapsack)
-toolbox.register("mate", cxSet)
-toolbox.register("mutate", mutSet)
-toolbox.register("select", tools.selNSGA2)
 
 def execute(values, maxValue):
     items['itemvalue'] = values
