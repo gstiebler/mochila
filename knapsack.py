@@ -28,14 +28,15 @@ IND_INIT_SIZE = 5
 # dict initialization. It is also seeded in main().
 random.seed(64)
 
-items = {'itemvalue': 0}
+items = []
+max_value = 0
 
 creator.create("Fitness", base.Fitness, weights=(-1.0, 1.0))
 creator.create("Individual", set, fitness=creator.Fitness)
 
 toolbox = base.Toolbox()
 
-numberOfItems = 26
+numberOfItems = 0
 
 def initializeToolbs(numItems):
     numberOfItems = numItems
@@ -56,9 +57,9 @@ def initializeToolbs(numItems):
 def evalKnapsack(individual):
     value = 0.0
     for item in individual:
-        value += items['itemvalue'][item].value
+        value += items[item].value
         
-    if value > items['itemmax']:
+    if value > max_value:
         return 10000000, 0             # Ensure overweighted bags are dominated
     if value < 0.0001:
         return 10000000, 0 
@@ -84,8 +85,12 @@ def mutSet(individual):
     return individual,
 
 def execute(values, maxValue):
-    items['itemvalue'] = values
-    items['itemmax'] = maxValue
+    global items
+    global max_value
+    global numberOfItems
+    items = values
+    max_value = maxValue
+    numberOfItems = len(values)
     random.seed(64)
     NGEN = 50
     MU = 50
