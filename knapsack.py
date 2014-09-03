@@ -91,6 +91,8 @@ def execute(values, maxValue):
     items = values
     max_value = maxValue
     numberOfItems = len(values)
+    initializeToolbs(numberOfItems)
+    print "num items: " + str(numberOfItems)
     random.seed(64)
     NGEN = 50
     MU = 50
