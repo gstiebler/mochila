@@ -19,4 +19,4 @@ def readExcel():
 	for rx in range(sh.nrows):
 		values.append(Value(sh.cell_value(rowx=rx, colx=0), sh.cell_value(rowx=rx, colx=1)))
 		
-	return values
+	return values, sh.cell_value(rowx=0, colx=3)
